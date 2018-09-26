@@ -1,23 +1,27 @@
-import Component from  '../../common/component.js';
+import Component from "../../common/component.js";
 
 export default class PhoneCatalog extends Component {
-  constructor({element}) {
+  constructor({ element }) {
     super({ element });
 
-    this.on('click', '[data-element="phone-link"]', (event) => {
+    this.on("click", '[data-element="phone-link"]', event => {
       event.preventDefault();
       let phoneLink = event.delegateTarget;
-      let phoneElement = phoneLink.closest('[data-element="phone"]')
+      let phoneElement = phoneLink.closest('[data-element="phone"]');
 
-      this._trigger('phoneSelected', phoneElement.dataset.phoneId);
+      this._trigger("phoneSelected", phoneElement.dataset.phoneId);
     });
 
-    this.on('click', '[data-element="button-add"]', (event) => {
-      let phoneElement = event.delegateTarget.closest('[data-element="phone"]')
+    this.on("click", '[data-element="button-add"]', event => {
+      let phoneElement = event.delegateTarget.closest('[data-element="phone"]');
 
-      this._trigger('addToShoppingCart', phoneElement.dataset.phoneId);
-    })
+      this._trigger("addToShoppingCart", phoneElement.dataset.phoneId);
+    });
 
+    this._catalog.on("sortedArray", event => {
+      const sortedPhones = event._phones;
+      showPhones(sortedPhones);
+    });
   }
 
   showPhones(phones) {
@@ -26,14 +30,18 @@ export default class PhoneCatalog extends Component {
     this.show();
   }
 
-
   _render() {
     this._element.innerHTML = `
       <ul class="phones">
-        ${
-           this._phones.map(phone => `
-           <li data-phone-id="${phone.id}" data-element="phone" class="thumbnail">
-                    <a data-element="phone-link" href="#!/phones/${phone.id}" class="thumb">
+        ${this._phones
+          .map(
+            phone => `
+           <li data-phone-id="${
+             phone.id
+           }" data-element="phone" class="thumbnail">
+                    <a data-element="phone-link" href="#!/phones/${
+                      phone.id
+                    }" class="thumb">
                         <img alt="${phone.name}" src="${phone.imageUrl}">
                     </a>
 
@@ -43,11 +51,14 @@ export default class PhoneCatalog extends Component {
                         </a>
                     </div>
 
-                    <a data-element="phone-link" href="#!/phones/${phone.id}">${phone.name}</a>
+                    <a data-element="phone-link" href="#!/phones/${phone.id}">${
+              phone.name
+            }</a>
                     <p>${phone.snippet}</p>
                 </li>
-           `).join('') 
-        }
+           `
+          )
+          .join("")}
                 
                
             </ul>
